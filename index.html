@@ -205,7 +205,7 @@
       <div class="stat-value" id="statMonth">—</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">With goals set</div>
+      <div class="stat-label">Active clients</div>
       <div class="stat-value" id="statGoals">—</div>
     </div>
   </div>
@@ -234,6 +234,14 @@
     return ((first?.[0] || '') + (last?.[0] || '')).toUpperCase() || '?';
   }
 
+  function formatDate(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    if (isNaN(d)) return '';
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return String(d.getDate()).padStart(2,'0') + '-' + months[d.getMonth()] + '-' + d.getFullYear();
+  }
+
   function renderClients(clients) {
     const list = document.getElementById('clientList');
     document.getElementById('listLabel').textContent = `Clients (${clients.length})`;
@@ -248,16 +256,19 @@
       return;
     }
 
-    list.innerHTML = clients.map((c, i) => `
+    list.innerHTML = clients.map((c, i) => {
+      const isActive = !c.status || c.status === 'Active';
+      const badge = `<span style="display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:${isActive ? '#e8f4ee' : '#f1efe8'}; color:${isActive ? '#2d6a4f' : '#6b6860'};">${isActive ? 'Active' : 'Inactive'}</span>`;
+      return `
       <div class="client-card" style="animation-delay:${i * 0.04}s">
         <div class="avatar">${getInitials(c.firstName, c.lastName)}</div>
         <div class="client-info">
-          <div class="client-name">${c.firstName} ${c.lastName}</div>
-          <div class="client-meta">${c.dob ? 'DOB: ' + c.dob : ''}${c.goals ? ' · ' + c.goals.substring(0, 40) + (c.goals.length > 40 ? '...' : '') : ''}</div>
+          <div class="client-name" style="display:flex; align-items:center; gap:8px;">${c.firstName} ${c.lastName} ${badge}</div>
+          <div class="client-meta">Last update: ${formatDate(c.timestamp)}</div>
         </div>
         <a href="form.html?row=${c.row}" class="btn-edit">Edit</a>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 
   function filterClients() {
@@ -278,7 +289,7 @@
     }).length;
     document.getElementById('statMonth').textContent = thisMonth;
     const withGoals = clients.filter(c => c.goals && c.goals.trim()).length;
-    document.getElementById('statGoals').textContent = withGoals;
+    document.getElementById('statGoals').textContent = clients.filter(c => c.status === 'Active' || !c.status).length;
   }
 
   function loadClients() {

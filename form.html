@@ -399,6 +399,22 @@
         <input type="date" id="dob" required>
       </div>
     </div>
+    <div class="field-grid cols-2" style="margin-top:14px;">
+      <div class="field">
+        <label>Phone number</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="countryCode" placeholder="+971" style="width:90px; flex-shrink:0;">
+          <input type="text" id="phone" placeholder="50 123 4567" style="flex:1;">
+        </div>
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <select id="status">
+          <option value="Active" selected>Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+    </div>
   </div>
 
   <!-- Health Background -->
@@ -549,9 +565,12 @@
           document.getElementById('firstName').value = r[1] || '';
           document.getElementById('lastName').value = r[2] || '';
           document.getElementById('dob').value = r[3] || '';
-          document.getElementById('injuries').value = r[5] || '';
-          document.getElementById('goals').value = r[6] || '';
-          if (r[7] === 'Yes') document.getElementById('consent').checked = true;
+          document.getElementById('countryCode').value = r[4] || '';
+          document.getElementById('phone').value = r[5] || '';
+          document.getElementById('status').value = r[6] || 'Active';
+          document.getElementById('injuries').value = r[8] || '';
+          document.getElementById('goals').value = r[9] || '';
+          if (r[10] === 'Yes') document.getElementById('consent').checked = true;
           // Measurements row 1
           const mInputs = document.querySelectorAll('#measBody tr:not(.no-row) td input');
           if (r[8]) { const d = document.querySelector('#measBody .meas-date'); if(d) d.value = r[8]; }
@@ -650,6 +669,9 @@
       firstName:   document.getElementById('firstName').value.trim(),
       lastName:    document.getElementById('lastName').value.trim(),
       dob:         document.getElementById('dob').value,
+      countryCode: document.getElementById('countryCode').value.trim(),
+      phone:       document.getElementById('phone').value.trim(),
+      status:      document.getElementById('status').value,
       references:  '',
       injuries:    document.getElementById('injuries').value.trim(),
       goals:       document.getElementById('goals').value.trim(),
